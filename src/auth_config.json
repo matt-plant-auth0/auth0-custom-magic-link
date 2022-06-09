@@ -1,0 +1,5 @@
+{
+  "domain": "mattp-demo.eu.auth0.com",
+  "clientId": "7mRIJ6CjBrcuWr9HMsIBIhSiyE3B3liT",
+  "audience": "http://localhost:3001/api"
+}
