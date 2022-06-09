@@ -2,6 +2,7 @@
 
 This project is based on the Auth0 React sample application, and demonstrates how a marketing system could generate a custom magic link to authenticate users with Auth0. The project has certain requirements and dependancies which need to be setup in Auth0 and the NodeJS environment variables.
 
+
 # Auth0 Tenant Setup
 
 For this project to function correctly you will need the following setup in your tenant:
@@ -29,18 +30,26 @@ For this project to function correctly you will need the following setup in your
     b) Adding custom claims to the tokens
 
     c) Denying access for already used links
-    
+
 An example of this can be found in the 'tenant' folder in this project.
+
 
 # Node .env Vars
 
 DOMAIN=Your Auth0 tenant domain
+
 CLIENT_ID=Your Auth0 management API client ID
+
 CLIENT_SECRET=Your Auth0 management API secret
+
 ROPG_CLIENT=Your custom magic link application's client ID
+
 ROPG_SECRET=Your custom magic link application's secret
+
 SPA_AUDIENCE=Your SPA application's API audience
+
 ROPG_REALM=Your custom magic link DB connection name
+
 
 # Custom Magic Link DB Clean-up
 
