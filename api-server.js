@@ -3,9 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
-const jwt = require("express-jwt");
-const jwksRsa = require("jwks-rsa");
-const fetch = require("node-fetch");
 const ManagementClient = require('auth0').ManagementClient;
 const AuthenticationClient = require('auth0').AuthenticationClient;
 const authConfig = require("./src/auth_config.json");
@@ -36,37 +33,6 @@ app.use(cors({ origin: appOrigin }));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-const checkJwt = jwt({
-  secret: jwksRsa.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `https://${authConfig.domain}/.well-known/jwks.json`,
-  }),
-
-  audience: authConfig.audience,
-  issuer: `https://${authConfig.domain}/`,
-  algorithms: ["RS256"],
-});
-
-app.get("/api/external", checkJwt, (req, res) => {
-  res.send({
-    msg: "Your access token was successfully validated!",
-  });
-});
-
-app.get("/api/management", checkJwt, async (req, res) => {
-  const managementClient = new ManagementClient({
-      domain: process.env.DOMAIN,
-      clientId: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET,
-      scope: 'read:organizations'
-  });
-
-  let orgs = await managementClient.users.getUserOrganizations({id: req.user.sub});
-  
-  res.send(orgs);
-});
 
 app.post("/api/marketing-link", (req, res) => {
   var token = jwtGen.sign({ email: req.body.email, campaignID: req.body.campaignID }, 'S3cr3t!', { expiresIn: '2 days' });
@@ -78,19 +44,37 @@ app.get("/api/clean-marketing-db", async (req, res) => {
     domain: process.env.DOMAIN,
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    scope: 'delete:users read:users'
+    scope: 'delete:users read:users update:users'
   });
 
-  let userList = await managementClient.getUsers({
-    search_engine: 'v3',
-    q:'identities.connection:"marketing-link"',
-  });
+  const deleteUsers = () => {
+    return new Promise( async (resolve, reject) => {
+      let userList = await managementClient.getUsers({
+        search_engine: 'v3',
+        q:`identities.connection:"${process.env.ROPG_REALM}"`,
+      });
 
-  userList.forEach(async (user) => {
-    await managementClient.deleteUser({id: user.user_id});
-  });
+      let count = 0;
 
-  res.send({msg: 'All users deleted from "marketing-link"'});
+      userList.forEach(async (user) => {
+        if(user.identities.length > 1){
+          user.identities.forEach(async (id) => {
+            if(id.connection === process.env.ROPG_REALM && `${id.provider}|${id.user_id}` !== user.user_id){
+              let unlinkedAccount = await managementClient.unlinkUsers({id: user.user_id, provider: id.provider, user_id: id.user_id});
+              count++;
+            }
+          });
+        }else{
+          await managementClient.deleteUser({id: user.user_id});
+          count++;
+        }
+      });
+      resolve (count);
+    });
+  }
+
+  let deletedCount = await deleteUsers();
+  res.send({msg: `${deletedCount} users deleted from "${process.env.ROPG_REALM}"`});
 
 });
 

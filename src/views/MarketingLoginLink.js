@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Form, FormGroup, Input, Label, Button, Container } from "reactstrap";
 import * as Cookies from 'es-cookie';
 import { getConfig } from "../config";
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import Loading from "../components/Loading";
 
