@@ -56,19 +56,23 @@ app.get("/api/clean-marketing-db", async (req, res) => {
 
       let count = 0;
 
-      userList.forEach(async (user) => {
+      for(var i=0; i < userList.length; i++){
+        var user = userList[i];
         if(user.identities.length > 1){
-          user.identities.forEach(async (id) => {
+          for(var j=0; j < user.identities.length; j++){
+            var id = user.identities[j];
             if(id.connection === process.env.ROPG_REALM && `${id.provider}|${id.user_id}` !== user.user_id){
               let unlinkedAccount = await managementClient.unlinkUsers({id: user.user_id, provider: id.provider, user_id: id.user_id});
+              await managementClient.deleteUser({id: unlinkedAccount.user_id});
               count++;
             }
-          });
+          }
         }else{
           await managementClient.deleteUser({id: user.user_id});
           count++;
         }
-      });
+      }
+
       resolve (count);
     });
   }
