@@ -7,17 +7,17 @@ This project is based on the Auth0 React sample application, and demonstrates ho
 For this project to function correctly you will need the following setup in your tenant:
 
 1) A Single Page Application, which the front-end of this project will communicate with using the React SDK
-a) This will need refresh tokens enabled
+  a) This will need refresh tokens enabled
 2) A Regular Web Application, which the back-end will communicate with using the NodeJS SDK
-a) This will need refresh tokens enabled, and the Password grant allowed in the advanced settings
+  a) This will need refresh tokens enabled, and the Password grant allowed in the advanced settings
 3) A custom DB connection, with lazy migration disabled and 'Sync user profile attributes at each login' enabled
-a) This will require custom login & delete scripts - please see 'tenant' folder in project
+  a) This will require custom login & delete scripts - please see 'tenant' folder in project
 4) An API setup for the back-end application
-a) This will also need refresh tokens enabled
+  a) This will also need refresh tokens enabled
 5) An Action created to facilitate
-a) Silent account linking
-b) Adding custom claims to the tokens
-c) Denying access for already used links
+  a) Silent account linking
+  b) Adding custom claims to the tokens
+  c) Denying access for already used links
 An example of this can be found in the 'tenant' folder in this project.
 
 # Node .env Vars
