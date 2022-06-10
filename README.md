@@ -33,6 +33,7 @@ For this project to function correctly you will need the following setup in your
 
 An example of this can be found in the 'tenant' folder in this project.
 
+Note: Refresh tokens are required in this instance so that the session can be transferred from the back-end ROPG flow to the front-end SPA SDK. Additionally this also means that the React SDK's cache storage has been set to 'localstorage' in order to easily create the session for the SPA SDK to read - in a production scenario we would strongly recommend creating a custom cache instead for security reasons. More details on how to do this here: https://github.com/auth0/auth0-spa-js#creating-a-custom-cache
 
 # Node .env Vars
 
