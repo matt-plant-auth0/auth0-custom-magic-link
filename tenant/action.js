@@ -21,7 +21,7 @@ exports.onExecutePostLogin = async (event, api) => {
           // q: `name:"${event.user.name}"`
         };
   
-        auth0.getUsers(params, (err, users) => {
+        auth0.users.getAll(params, (err, users) => {
           users = users ? users : [];
           resolve(users.filter(x => x.user_id !== event.user.user_id));
         });
@@ -37,7 +37,7 @@ exports.onExecutePostLogin = async (event, api) => {
           provider
         };
         
-        auth0.linkUsers(userId, params, (err, user) => {
+        auth0.users.link(userId, params, (err, user) => {
           if (err) {
             console.log(err);
           }
@@ -51,7 +51,7 @@ exports.onExecutePostLogin = async (event, api) => {
     const mergeMetaData = (user_metadata, app_metadata) => {
       return new Promise((resolve, reject) => {
         // @ts-ignore
-        auth0.updateUser({ id: event.user.user_id }, {
+        auth0.users.update({ id: event.user.user_id }, {
           // @ts-ignore
           user_metadata: user_metadata,
           // @ts-ignore
